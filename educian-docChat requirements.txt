@@ -1,4 +1,9 @@
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.text_splitter import CharacterTextSplitter
-from langchain import OpenAI,VectorDBQA
+langchain.embeddings.openai
+OpenAIEmbeddings
+langchain.vectorstores
+FAISS
+CharacterTextSplitter
+langchain.text_splitter
+langchain
+Openai
+Vectordbqa
