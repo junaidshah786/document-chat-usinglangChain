@@ -4,17 +4,8 @@ from langchain.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from langchain import OpenAI,VectorDBQA
 import openai;
-
-import os
 import streamlit as st
 
-st.title("✅ Educian : DocChat using `LangChain`")
-
-openai.api_key=st.text_input(
-            "Enter Your API KEY : ",
-            placeholder="Enter you API key here: ...",
-            )
-os.environ['OPENAI_API_KEY']=openai.api_key
 
 def validate_api_key():
     with st.spinner('Verifying your API key...'):
@@ -27,6 +18,19 @@ def validate_api_key():
             return True
         except Exception as e:
             return False
+        
+def document_changed():
+    if 'loadEmbeddings' in st.session_state:
+        del st.session_state.file_upload
+        del st.session_state.loadEmbeddings
+
+
+st.title("✅ Educian : `DocChat`")
+
+openai.api_key=st.text_input(
+            "Enter Your API KEY : ",
+            placeholder="Enter you API key here: ...", type="password"
+            )
     
 if openai.api_key:
     if "API_KEY" not in st.session_state:
@@ -39,10 +43,7 @@ if openai.api_key:
 
     if st.session_state.flag:
 
-        def document_changed():
-            if 'loadEmbeddings' in st.session_state:
-                del st.session_state.file_upload
-                del st.session_state.loadEmbeddings
+
 
         file_upload = st.file_uploader(label='Upload your document here.', type=None, accept_multiple_files=False, key=None,
                                     help=None, on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible")
@@ -60,13 +61,14 @@ if openai.api_key:
                 with st.spinner('Loading Document...'):
                     documents = file_upload.getvalue().decode('UTF-8')
                     st.session_state['preview']=documents
-
+                    # character textSpliter object created
                     text_splitter=CharacterTextSplitter(chunk_size=1000,chunk_overlap=0)
                     texts=text_splitter.split_text(documents)
-                    embeddings=OpenAIEmbeddings()
+                    embeddings=OpenAIEmbeddings(openai_api_key=openai.api_key)
 
                     docsearch=FAISS.from_texts(texts,embeddings)
-                    st.session_state.qa=VectorDBQA.from_chain_type(llm=OpenAI(),chain_type='stuff',vectorstore=docsearch)
+                    st.session_state.qa=VectorDBQA.from_chain_type(llm=OpenAI(openai_api_key=openai.api_key),chain_type='stuff',vectorstore=docsearch)
+                    # st.success( st.session_state.qa)
                     st.success('Document Loaded `Successfully`')    
             st.text_area('preview','',height=150,key='preview')
 
