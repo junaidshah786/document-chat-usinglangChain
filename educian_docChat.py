@@ -81,7 +81,7 @@ if openai.api_key:
             placeholder="how to avoid being taken by surprise by something?",
         )
 
-         if st.button("Tell me about it", type="primary"):
+        if st.button("Tell me about it", type="primary"):
             if 'qa' in st.session_state:
                 with st.spinner('Searching for an Answer...'):
                     st.success(st.session_state.qa.run(query))
